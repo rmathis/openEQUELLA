@@ -3,34 +3,32 @@ import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-  Theme,
-  WithStyles,
-  withStyles,
-  createStyles,
+  Theme
 } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import DeleteIcon from "@material-ui/icons/Delete";
 import * as React from "react";
+import { FunctionComponent } from "react";
 import { LocationDescriptor } from "history";
 import { Link } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
 
-const styles = (theme: Theme) =>
-  createStyles({
-    searchResultContent: {
-      marginTop: theme.spacing(1),
-    },
-    itemThumb: {
-      maxWidth: "88px",
-      maxHeight: "66px",
-      marginRight: "12px",
-    },
-    displayNode: {
-      padding: 0,
-    },
-    details: {
-      marginTop: theme.spacing(1),
-    },
-  });
+const useStyles = makeStyles((theme: Theme) => ({
+  searchResultContent: {
+    marginTop: theme.spacing(1),
+  },
+  itemThumb: {
+    maxWidth: "88px",
+    maxHeight: "66px",
+    marginRight: "12px",
+  },
+  displayNode: {
+    padding: 0,
+  },
+  details: {
+    marginTop: theme.spacing(1),
+  },
+}));
 
 export interface SearchResultExtraDetail {
   label: string;
@@ -45,46 +43,41 @@ export interface SearchResultProps {
   secondaryText?: string;
 }
 
-type PropsWithStyles = SearchResultProps &
-  WithStyles<"searchResultContent" | "itemThumb" | "displayNode" | "details">;
+const SearchResult: FunctionComponent<SearchResultProps> = (props: SearchResultProps) => {
+  const { onDelete, to, primaryText, secondaryText, onClick } = props;
+  const classes = useStyles();
+  const link = (
+    <Typography
+      color="primary"
+      variant="subtitle1"
+      component={(p) => (
+        <Link {...p} to={to}>
+          {primaryText}
+        </Link>
+      )}
+    />
+  );
 
-class SearchResult extends React.Component<PropsWithStyles> {
-  render() {
-    const { onDelete, to } = this.props;
-    const link = (
-      <Typography
-        color="primary"
-        variant="subtitle1"
-        component={(p) => (
-          <Link {...p} to={to}>
-            {this.props.primaryText}
-          </Link>
+  const content = (
+    <Typography
+      variant="body1"
+      className={classes.searchResultContent}
+    >
+      {secondaryText}
+    </Typography>
+  );
+  return (
+    <ListItem button onClick={onClick} divider>
+      <ListItemText disableTypography primary={link} secondary={content} />
+      <ListItemSecondaryAction>
+        {onDelete && (
+          <IconButton onClick={onDelete}>
+            <DeleteIcon />
+          </IconButton>
         )}
-      />
-    );
-
-    const content = (
-      <Typography
-        variant="body1"
-        className={this.props.classes.searchResultContent}
-      >
-        {this.props.secondaryText}
-      </Typography>
-    );
-
-    return (
-      <ListItem button onClick={this.props.onClick} divider>
-        <ListItemText disableTypography primary={link} secondary={content} />
-        <ListItemSecondaryAction>
-          {onDelete && (
-            <IconButton onClick={onDelete}>
-              <DeleteIcon />
-            </IconButton>
-          )}
-        </ListItemSecondaryAction>
-      </ListItem>
-    );
-  }
+      </ListItemSecondaryAction>
+    </ListItem>
+  );
 }
 
-export default withStyles(styles)(SearchResult);
+export default SearchResult;
