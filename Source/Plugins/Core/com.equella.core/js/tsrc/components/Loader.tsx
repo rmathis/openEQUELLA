@@ -1,14 +1,12 @@
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {
-  StyleRules,
   Theme,
-  WithStyles,
-  withStyles,
+  makeStyles,
 } from "@material-ui/core/styles";
 import * as React from "react";
+import { FunctionComponent } from "react";
 
-const styles = (theme: Theme) => {
-  return {
+const useStyles = makeStyles((theme: Theme) => ({
     container: {
       position: "relative",
       width: "100%",
@@ -23,24 +21,21 @@ const styles = (theme: Theme) => {
       right: 0,
       top: 0,
       bottom: 0,
-    },
-  } as StyleRules;
-};
+    }
+}));
 
 interface LoaderProps {}
 
-type Props = LoaderProps & WithStyles<"container" | "loader">;
 
-class Loader extends React.Component<Props> {
-  render() {
-    return (
-      <div className={this.props.classes.container}>
-        <div className={this.props.classes.loader}>
-          <CircularProgress size={100} thickness={5} color="secondary" />
-        </div>
+const Loader: FunctionComponent<LoaderProps> = (props: LoaderProps) => {
+  const classes = useStyles();
+  return (
+    <div className={classes.container}>
+      <div className={classes.loader}>
+        <CircularProgress size={100} thickness={5} color="secondary" />
       </div>
-    );
-  }
+    </div>
+  );
 }
 
-export default withStyles(styles)(Loader);
+export default Loader;
